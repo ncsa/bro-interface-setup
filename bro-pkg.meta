@@ -1,3 +1,4 @@
 [package]
+description=A broctl plugin that helps you setup capture interfaces
 plugin_dir = .
 tags = bro plugin, interface, mtu
