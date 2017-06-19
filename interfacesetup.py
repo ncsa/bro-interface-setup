@@ -49,10 +49,10 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
         for n in host_nodes.values():
             cmd = up_template.format(interface=n.interface, mtu=mtu)
             cmds.append((n, cmd))
-            self.message(cmd)
             cmd = flags_template.format(interface=n.interface)
             cmds.append((n, cmd))
-            self.message(cmd)
 
-        for res in self.executeParallel(cmds):
-            print res
+        for (n, success, output) in self.executeParallel(cmds):
+            if not success:
+                self.message("Failed to run command on {}:".format(n.host))
+                self.message(output)
