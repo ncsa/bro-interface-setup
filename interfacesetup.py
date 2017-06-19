@@ -26,14 +26,19 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
 
     def options(self):
         return [("mtu", "int", 9216, "Interface MTU"),
-                ("enabled", "string", "0", "Set to enable plugin")]
+                ("enabled", "string", "0", "Set to enable plugin"),
+                ("up_command", "string", "/sbin/ifconfig {interface} up mtu {mtu}", "Command to bring the interface up"),
+                ("flags_command", "string", "/sbin/ethtool -K {interface} gro off lro off rx off tx off gso off", "Command to setup the interface for capturing"),
+        ]
 
     def cmd_start_pre(self, nodes):
         if not nodes:
             return
         
         mtu = self.getOption("mtu")
-        self.message("InterfaceSetupPlugin: mtu=%s" % (mtu))
+        up_template = self.getOption("up_command")
+        flags_template = self.getOption("flags_command")
+        self.message("InterfaceSetupPlugin: bringing up interfaces with an mtu of %s" % (mtu))
 
         host_nodes = {}
         for n in nodes:
@@ -42,9 +47,12 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
 
         cmds = []
         for n in host_nodes.values():
-            cmd = "/sbin/ifconfig %s up mtu %s" % (n.interface, mtu)
+            cmd = up_template.format(interface=n.interface, mtu=mtu)
             cmds.append((n, cmd))
-            cmd = "/sbin/ethtool -K %s gro off lro off rx off tx off gso off" % (n.interface)
+            self.message(cmd)
+            cmd = flags_template.format(interface=n.interface)
             cmds.append((n, cmd))
+            self.message(cmd)
 
-        self.executeParallel(cmds)
+        for res in self.executeParallel(cmds):
+            print res
