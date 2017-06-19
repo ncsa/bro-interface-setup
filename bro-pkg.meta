@@ -1,2 +1,3 @@
 [package]
 plugin_dir = .
+tags = bro plugin, interface, mtu
