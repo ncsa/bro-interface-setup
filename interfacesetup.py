@@ -29,6 +29,8 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
                 ("enabled", "string", "0", "Set to enable plugin"),
                 ("up_command", "string", "/sbin/ifconfig {interface} up mtu {mtu}", "Command to bring the interface up"),
                 ("flags_command", "string", "/sbin/ethtool -K {interface} gro off lro off rx off tx off gso off", "Command to setup the interface for capturing"),
+                ("freebsd_enable", "string", "0", "Set to enable interface configuration for FreeBSD"),
+                ("freebsd_flags_command", "string", "/sbin/ifconfig {interface} -rxcsum -rxcsum6 -txcsum -txcsum6 -tso -lro", "Command to setup the interface for capturing on FreeBSD"),
         ]
 
     def cmd_start_pre(self, nodes):
@@ -37,7 +39,10 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
         
         mtu = self.getOption("mtu")
         up_template = self.getOption("up_command")
-        flags_template = self.getOption("flags_command")
+        if self.getOption("freebsd_enable") == "1":
+            flags_template = self.getOption("freebsd_flags_command")
+        else:
+            flags_template = self.getOption("flags_command")
         self.message("InterfaceSetupPlugin: bringing up interfaces with an mtu of %s" % (mtu))
 
         host_nodes = {}
