@@ -42,14 +42,21 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
 
         host_nodes = {}
         for n in nodes:
-            if n.interface:
-                host_nodes[(n.host, n.interface)] = n
+            host_nodes[(n.host, n.interface)] = n
 
         cmds = []
         for n in host_nodes.values():
-            cmd = up_template.format(interface=n.interface, mtu=mtu)
+            intf = n.interface
+            if not intf:
+                continue
+            if '*' in intf:
+                self.error("Interface setup can't handle wildcard interfaces")
+                continue
+            if '::' in intf:
+                intf = intf.split('::')[1]
+            cmd = up_template.format(interface=intf, mtu=mtu)
             cmds.append((n, cmd))
-            cmd = flags_template.format(interface=n.interface)
+            cmd = flags_template.format(interface=intf)
             cmds.append((n, cmd))
 
         for (n, success, output) in self.executeParallel(cmds):
