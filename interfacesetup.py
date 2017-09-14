@@ -40,20 +40,23 @@ class InterfaceSetupPlugin(BroControl.plugin.Plugin):
         flags_template = self.getOption("flags_command")
         self.message("InterfaceSetupPlugin: bringing up interfaces with an mtu of %s" % (mtu))
 
-        host_nodes = {}
+        host_interfaces = {}
         for n in nodes:
-            host_nodes[(n.host, n.interface)] = n
-
-        cmds = []
-        for n in host_nodes.values():
             intf = n.interface
             if not intf:
                 continue
             if '*' in intf:
                 self.error("Interface setup can't handle wildcard interfaces")
                 continue
+            #Handle interfaces that look like myricom::p1p1:4
             if '::' in intf:
                 intf = intf.split('::')[1]
+            if ':' in intf:
+                intf = intf.split(':')[0]
+            host_interfaces[(n.host, intf)] = (n, intf)
+
+        cmds = []
+        for (n, intf) in host_interfaces.values():
             cmd = up_template.format(interface=intf, mtu=mtu)
             cmds.append((n, cmd))
             cmd = flags_template.format(interface=intf)
