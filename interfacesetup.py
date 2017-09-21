@@ -7,8 +7,8 @@ import BroControl.plugin
 
 def extract_interfaces(intf):
     #Handle interfaces that look like multi:p1p1,p1p2
-    if intf.startswith("multi:"):
-        return intf.replace("multi:", "").split(",")
+    if intf.startswith("pf_ring::multi:"):
+        return intf.replace("pf_ring::multi:", "").split(",")
     #Handle interfaces that look like myricom::p1p1:4
     if '::' in intf:
         intf = intf.split('::')[1]
