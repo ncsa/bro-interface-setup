@@ -18,6 +18,6 @@ interfacesetup.enabled=1
 #interfacesetup.flags_command=/sbin/ethtool -K {interface} gro off lro off rx off tx off gso off
 
 #For FreeBSD systems uncomment this line
-#interfacesetup.flags_command=/sbin/ifconfig {interface} -rxcsum -txcsum -tso -lro -rxcsum6 -txcsum6
+#interfacesetup.flags_command=/sbin/ifconfig {interface} -rxcsum -txcsum -tso4 -tso6 -lro -rxcsum6 -txcsum6 -vlanhwcsum -vlanhwtso
 
 ```
