@@ -14,7 +14,7 @@ def extract_interfaces(intf):
         intf = intf.split('::')[1]
     if ':' in intf:
         intf = intf.split(':')[0]
-    return [intf]
+    return intf.split(',')
 
 class InterfaceSetupPlugin(BroControl.plugin.Plugin):
     def __init__(self):
