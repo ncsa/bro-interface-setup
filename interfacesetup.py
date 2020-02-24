@@ -2,8 +2,10 @@
 # A plugin to setup capture interfaces
 # The plugin is off by default. To enable it, add "interfacesetup.enabled=1" to broctl.cfg.
 #
-
-import BroControl.plugin
+try:
+    import ZeekControl.plugin as PluginBase
+except ImportError:
+    import BroControl.plugin as PluginBase
 
 def extract_interfaces(intf):
     #Handle interfaces that look like multi:p1p1,p1p2
@@ -16,7 +18,7 @@ def extract_interfaces(intf):
         intf = intf.split(':')[0]
     return intf.split(',')
 
-class InterfaceSetupPlugin(BroControl.plugin.Plugin):
+class InterfaceSetupPlugin(PluginBase.Plugin):
     def __init__(self):
         super(InterfaceSetupPlugin, self).__init__(apiversion=1)
 
